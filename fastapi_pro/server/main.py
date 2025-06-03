@@ -1,8 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pathlib import Path
+import shutil
 import logging
 
 # Configure logging
@@ -47,6 +48,31 @@ async def list_models():
         )
     except Exception as e:
         logger.error(f"Error listing models: {str(e)}")
+        return JSONResponse(
+            content={"error": str(e)},
+            status_code=500
+        )
+
+@app.post("/api/upload")
+async def upload_model(file: UploadFile = File(...)):
+    try:
+        if not file.filename.endswith('.ply'):
+            return JSONResponse(
+                content={"error": "Only PLY files are allowed"},
+                status_code=400
+            )
+        
+        file_path = MODELS_DIR / file.filename
+        with file_path.open('wb') as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        
+        logger.info(f"File uploaded: {file.filename}")
+        return JSONResponse(
+            content={"message": "File uploaded successfully", "filename": file.filename},
+            status_code=200
+        )
+    except Exception as e:
+        logger.error(f"Upload error: {str(e)}")
         return JSONResponse(
             content={"error": str(e)},
             status_code=500
