@@ -1,0 +1,53 @@
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from pathlib import Path
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+app = FastAPI(title="3D Model Server")
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # Vite's default port
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Create models directory if it doesn't exist
+MODELS_DIR = Path("models")
+MODELS_DIR.mkdir(exist_ok=True)
+
+# Mount the models directory
+app.mount("/models", StaticFiles(directory="models"), name="models")
+
+@app.get("/")
+async def read_root():
+    logger.info("Root endpoint accessed")
+    return JSONResponse(
+        content={"message": "3D Model Server", "status": "running"},
+        status_code=200
+    )
+
+@app.get("/api/models")
+async def list_models():
+    """List all available 3D models"""
+    try:
+        models = [f.name for f in MODELS_DIR.glob("*.ply")]
+        logger.info(f"Found models: {models}")
+        return JSONResponse(
+            content={"models": models, "count": len(models)},
+            status_code=200
+        )
+    except Exception as e:
+        logger.error(f"Error listing models: {str(e)}")
+        return JSONResponse(
+            content={"error": str(e)},
+            status_code=500
+        )
