@@ -1,6 +1,15 @@
-# 3D Model Viewer with React Three Fiber and FastAPI
+# 3D PLY Model Viewer
 
-A web application for viewing 3D PLY models using React Three Fiber on the frontend and FastAPI on the backend.
+A React and FastAPI application for viewing and uploading 3D PLY models with real-time visualization.
+
+## Features
+
+- 📁 Upload PLY files directly from your local disk
+- 🔄 Real-time model switching
+- 🎮 Interactive 3D controls
+- 🎨 Professional lighting setup
+- 📋 Model list management
+- 🌅 Environment lighting presets
 
 ## Prerequisites
 
@@ -8,24 +17,9 @@ A web application for viewing 3D PLY models using React Three Fiber on the front
 - Node.js 18.x or higher
 - npm 9.x or higher
 
-## Project Structure
-
-```
-fastapi_pro/
-├── server/
-│   ├── models/         # Directory for PLY model files
-│   └── main.py         # FastAPI server code
-├── src/
-│   ├── App.jsx
-│   └── Component.jsx   # Main 3D viewer component
-├── scripts/
-│   └── dev-server.js   # Development server starter
-└── package.json
-```
-
 ## Installation
 
-1. Clone the repository:
+1. Clone and navigate to the project:
 ```bash
 git clone <repository-url>
 cd fastapi_pro
@@ -41,59 +35,87 @@ pip install fastapi uvicorn python-multipart
 npm install
 ```
 
-## Adding 3D Models
+## Project Structure
 
-1. Create a `models` directory in the `server` folder if it doesn't exist:
-```bash
-mkdir server\models
 ```
-
-2. Copy your PLY files into the models directory:
-```bash
-copy path\to\your\models\*.ply server\models\
+fastapi_pro/
+├── server/
+│   ├── models/         # PLY model storage
+│   └── main.py         # FastAPI backend
+├── src/
+│   ├── App.jsx
+│   └── Component.jsx   # 3D viewer component
+├── scripts/
+│   └── dev-server.js   # Development server
+└── package.json
 ```
 
 ## Running the Application
 
-1. Start both frontend and backend servers:
+Start both frontend and backend:
 ```bash
 npm run dev:all
 ```
 
-This will start:
-- Frontend server at http://localhost:5173
-- Backend server at http://localhost:8000
+Access the application:
+- Frontend: http://localhost:5173
+- Backend: http://localhost:8000
 
-2. Open your browser and navigate to http://localhost:5173
+## Using the Application
 
-## Features
+1. **View Models**
+   - Use the dropdown menu to switch between uploaded models
+   - Interact with the 3D view:
+     - Left click + drag: Rotate
+     - Right click + drag: Pan
+     - Scroll: Zoom
 
-- Dynamic model loading from server
-- Model selection dropdown
-- Interactive 3D controls:
-  - Left click and drag to rotate
-  - Right click and drag to pan
-  - Scroll to zoom
-- Grid helper for scale reference
-- Professional lighting setup
+2. **Upload Models**
+   - Click the file input button
+   - Select a PLY file from your computer
+   - File will automatically upload and display
+
+3. **Controls**
+   - Model selection dropdown
+   - File upload button with progress indicator
+   - Interactive OrbitControls
+   - Grid helper for scale reference
 
 ## API Endpoints
 
 - `GET /`: Server status
-- `GET /api/models`: List available PLY models
-- `GET /models/{filename}`: Serve PLY model files
+- `GET /api/models`: List available models
+- `POST /api/upload`: Upload new PLY file
+- `GET /models/{filename}`: Serve model files
 
 ## Development
 
-To run servers separately:
-
-1. Backend (FastAPI):
+### Backend (FastAPI)
 ```bash
 cd server
 python -m uvicorn main:app --reload
 ```
 
-2. Frontend (Vite):
+### Frontend (Vite)
 ```bash
 npm run dev
 ```
+
+## Error Handling
+
+The application includes:
+- File type validation (.ply only)
+- Upload status indicators
+- Error messages for failed uploads
+- Server-side logging
+
+## Technical Details
+
+- **Frontend**: React with Three.js (react-three/fiber)
+- **Backend**: FastAPI with static file serving
+- **3D Features**: 
+  - Dynamic model loading
+  - Environment lighting
+  - Professional material settings
+  - Scale controls
+
